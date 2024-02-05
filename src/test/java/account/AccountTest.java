@@ -4,7 +4,6 @@ import api.client.UserApiClient;
 import api.model.user.CreateUserResponse;
 import api.model.user.DeleteUserResponse;
 import api.model.user.User;
-import com.google.errorprone.annotations.Var;
 import core.BaseTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;

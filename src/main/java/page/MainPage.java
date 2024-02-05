@@ -42,6 +42,11 @@ public class MainPage extends BasePage {
         driver.findElement(By.xpath(".//*[text()='" + ingredient + "']")).click();
     }
 
+    @Step("Получить название текущей вкладки")
+    public String getCurrentTabName() {
+        return driver.findElement(By.xpath("//div[contains(@class, 'current')]/span")).getText();
+    }
+
     @Step("В меню отображается {ingredient}")
     public boolean ingredientVisible1(String ingredient) {
         return driver.findElement(By.xpath(".//h2[text()='" + ingredient + "']")).isDisplayed();

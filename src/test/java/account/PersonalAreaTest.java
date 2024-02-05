@@ -10,9 +10,14 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import page.LoginPage;
 import page.MainPage;
 import page.ProfilePage;
+
+import java.time.Duration;
 
 import static api.helper.UserGenerator.getRandomUser;
 import static org.apache.http.HttpStatus.SC_ACCEPTED;
@@ -29,39 +34,56 @@ public class PersonalAreaTest extends BaseTest {
     private final UserApiClient userApiClient = new UserApiClient();
 
     @Test
-    @DisplayName("Переход в личный аккаунт")
-    public void personalArea() {
+    @DisplayName("Проверь переход по клику на «Личный кабинет»")
+    public void toMainPageFromAccountEnterOnPersonalAccount() {
         createUser();
-
         mainPage.clickPersonalArea();
-
         auth(email, password);
-
-        assertTrue(mainPage.createOrderButtonVisible());
-
-        mainPage.clickPersonalArea();
-
-        assertTrue(profilePage.profileLinkVisible());
-
-        profilePage.clickConstructorButton();
-
-        assertTrue(mainPage.createOrderButtonVisible());
-
         mainPage.clickPersonalArea();
         assertTrue(profilePage.profileLinkVisible());
-
-        profilePage.clickLogoButton();
-
-        assertTrue(mainPage.createOrderButtonVisible());
-
-        mainPage.clickPersonalArea();
-
-        profilePage.clickExitButton();
-
-        assertTrue(loginPage.enterTitleVisible());
-
         deleteAccount(email, password);
     }
+
+    @Test
+    @DisplayName("Проверь переход из личного кабинета в конструктор по клику на логотип Stellar Burgers")
+    public void toMainPageFromAccountPageWithLogoButton() {
+        createUser();
+        mainPage.clickPersonalArea();
+        auth(email, password);
+        assertTrue(mainPage.createOrderButtonVisible());
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.elementToBeClickable(By.xpath("//p[text()='Конструктор']")));
+        profilePage.clickLogoButton();
+        mainPage.createOrderButtonVisible();
+        deleteAccount(email, password);
+    }
+
+    @Test
+    @DisplayName("Проверь переход из личного кабинета в конструктор по клику на «Конструктор»")
+    public void toMainPageFromAccountPageWithConstructorButton() {
+        createUser();
+        mainPage.clickPersonalArea();
+        auth(email, password);
+        assertTrue(mainPage.createOrderButtonVisible());
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.elementToBeClickable(By.xpath("//p[text()='Конструктор']")));
+        profilePage.clickConstructorButton();
+        mainPage.createOrderButtonVisible();
+        deleteAccount(email, password);
+    }
+
+    @Test
+    @DisplayName("Проверь выход по кнопке «Выйти» в личном кабинете")
+    public void toMainPageFromAccountPageExit() {
+        createUser();
+        mainPage.clickPersonalArea();
+        auth(email, password);
+        mainPage.clickPersonalArea();
+        profilePage.clickExitButton();
+        assertTrue(loginPage.enterTitleVisible());
+        deleteAccount(email, password);
+    }
+
 
     @Step("Создание аккаунта")
     public void createUser() {
